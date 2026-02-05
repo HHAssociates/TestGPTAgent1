@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Snake</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="hud">
+        <div class="title title-hero">Snake: An Ode to LunchAware</div>
+        <div class="stats">
+          <span>Score: <strong id="score">0</strong></span>
+          <span id="status" class="status">Running</span>
+        </div>
+      </header>
+
+      <section class="stage">
+        <div class="animal-band" aria-hidden="true">
+          <div class="animal-mover a1">
+            <div class="animal-drift">
+              <div class="animal-wrap">
+                <img
+                  class="animal animal-a"
+                  src="https://commons.wikimedia.org/wiki/Special:FilePath/Funny_goat.jpg"
+                  alt="Funny goat"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="animal-mover a2">
+            <div class="animal-drift">
+              <div class="animal-wrap">
+                <img
+                  class="animal animal-b"
+                  src="https://commons.wikimedia.org/wiki/Special:FilePath/A_funny_looking_Angora_Goat_(2961446642).jpg"
+                  alt="Funny angora goat"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="animal-mover a3">
+            <div class="animal-drift">
+              <div class="animal-wrap">
+                <img
+                  class="animal animal-c"
+                  src="https://commons.wikimedia.org/wiki/Special:FilePath/Funny_dog.jpg"
+                  alt="Funny dog"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="animal-mover a4">
+            <div class="animal-drift">
+              <div class="animal-wrap">
+                <img
+                  class="animal animal-d"
+                  src="https://commons.wikimedia.org/wiki/Special:FilePath/Funny_Racoon.jpg"
+                  alt="Funny raccoon"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="animal-mover flyer">
+            <div class="animal-drift">
+              <div class="animal-wrap">
+                <img
+                  class="animal animal-fly"
+                  src="https://commons.wikimedia.org/wiki/Special:FilePath/Funny_Racoon.jpg"
+                  alt="Funny raccoon zooming by"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="board-wrap">
+          <img
+            class="logo logo-spin"
+            src="https://hennaharoon.com/hs-fs/hubfs/henna-haroon-and-associates-white-logo.png?width=900&height=900&name=henna-haroon-and-associates-white-logo.png"
+            alt="Henna Haroon & Associates logo"
+          />
+          <div class="face face-top">:D</div>
+          <div class="face face-top-left">^_^</div>
+          <div class="face face-top-right">O_o</div>
+          <div class="face face-right">o_O</div>
+          <div class="face face-right-bottom">:O</div>
+          <div class="face face-bottom">x_x</div>
+          <div class="face face-bottom-left">:3</div>
+          <div class="face face-left">:P</div>
+          <canvas id="board" width="420" height="420" aria-label="Snake board"></canvas>
+        </div>
+        <div class="panel">
+          <div class="panel-row">
+            <button id="restart" class="btn">Restart</button>
+            <button id="pause" class="btn">Pause</button>
+          </div>
+          <p class="help">Arrow keys / WASD to move. Space to pause. R to restart.</p>
+        </div>
+      </section>
+
+      <aside class="seal" aria-label="Psychedelic seal">
+        <div class="seal-ring">
+          <div class="seal-graphic" aria-hidden="true">
+            <svg viewBox="0 0 140 110" role="img" aria-label="Seal">
+              <defs>
+                <linearGradient id="sealGlow" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#9ffcff" />
+                  <stop offset="50%" stop-color="#ff91f9" />
+                  <stop offset="100%" stop-color="#fff4a8" />
+                </linearGradient>
+              </defs>
+              <ellipse cx="70" cy="62" rx="46" ry="34" fill="url(#sealGlow)" opacity="0.85" />
+              <ellipse cx="46" cy="52" rx="16" ry="13" fill="url(#sealGlow)" />
+              <ellipse cx="94" cy="52" rx="16" ry="13" fill="url(#sealGlow)" />
+              <circle cx="55" cy="55" r="3.5" fill="#1b0b28" />
+              <circle cx="85" cy="55" r="3.5" fill="#1b0b28" />
+              <ellipse cx="70" cy="67" rx="5" ry="3.5" fill="#1b0b28" />
+              <path d="M62 71c5 5 11 5 16 0" stroke="#1b0b28" stroke-width="2.4" fill="none" stroke-linecap="round" />
+              <path d="M35 82c8 6 18 9 35 9s27-3 35-9" stroke="#1b0b28" stroke-width="3" fill="none" stroke-linecap="round" />
+            </svg>
+          </div>
+          <div class="seal-text">COSMIC SEAL</div>
+          <div class="seal-sub">TRIPPY EDITION</div>
+        </div>
+      </aside>
+
+      <section class="controls" aria-label="On-screen controls">
+        <div class="dpad">
+          <button data-dir="up" class="btn">↑</button>
+          <div class="dpad-row">
+            <button data-dir="left" class="btn">←</button>
+            <button data-dir="down" class="btn">↓</button>
+            <button data-dir="right" class="btn">→</button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="credits">
+        <div>Creative Commons images:</div>
+        <a href="https://commons.wikimedia.org/wiki/File:Funny_goat.jpg" target="_blank" rel="noreferrer">
+          "Funny goat" by AdaAndMargaret (CC BY-SA 4.0)
+        </a>
+        <a
+          href="https://commons.wikimedia.org/wiki/File:A_funny_looking_Angora_Goat_(2961446642).jpg"
+          target="_blank"
+          rel="noreferrer"
+        >
+          "A funny looking Angora Goat" by Chadica (CC BY 2.0)
+        </a>
+        <a href="https://commons.wikimedia.org/wiki/File:Funny_dog.jpg" target="_blank" rel="noreferrer">
+          "Funny dog" by mikapon (CC BY-SA 2.0)
+        </a>
+        <a href="https://commons.wikimedia.org/wiki/File:Funny_Racoon.jpg" target="_blank" rel="noreferrer">
+          "Funny Racoon" by Renata (CC BY-SA 2.0)
+        </a>
+      </footer>
+    </main>
+
+    <script src="main.js"></script>
+  </body>
+</html>
