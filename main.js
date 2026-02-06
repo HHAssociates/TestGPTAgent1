@@ -8,7 +8,7 @@ const DIRECTIONS = {
 const DEFAULT_CONFIG = {
   gridSize: 21,
   startLength: 3,
-  tickMs: 140,
+  tickMs: 300,
 };
 
 function createRng(seed = Date.now()) {
@@ -125,6 +125,8 @@ const scoreEl = document.getElementById("score");
 const statusEl = document.getElementById("status");
 const restartBtn = document.getElementById("restart");
 const pauseBtn = document.getElementById("pause");
+const gameOverEl = document.getElementById("game-over");
+const restartOverlayBtn = document.getElementById("restart-overlay");
 
 function fail(msg) {
   if (statusEl) statusEl.textContent = msg;
@@ -140,6 +142,8 @@ const config = { ...DEFAULT_CONFIG };
 const rng = Math.random;
 let state = createInitialState(config, rng);
 let timerId = null;
+let currentTickMs = config.tickMs;
+if (gameOverEl) gameOverEl.hidden = true;
 
 const cell = canvas.width / config.gridSize;
 
@@ -165,10 +169,10 @@ function render() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawGrid();
 
-  const hue = (Date.now() / 10) % 360;
-  const headColor = `hsl(${hue}, 95%, 60%)`;
-  const bodyColor = `hsl(${(hue + 90) % 360}, 90%, 55%)`;
-  const foodColor = `hsl(${(hue + 210) % 360}, 95%, 58%)`;
+  const pulse = Math.sin(Date.now() / 140) > 0;
+  const headColor = pulse ? "#ff00ff" : "#42ffb8";
+  const bodyColor = pulse ? "#ffd400" : "#00c3ff";
+  const foodColor = "#ff3355";
 
   if (state.food) {
     ctx.fillStyle = foodColor;
@@ -193,16 +197,28 @@ function render() {
   scoreEl.textContent = String(state.score);
   if (!state.alive) {
     statusEl.textContent = "Game Over";
+    if (gameOverEl) {
+      gameOverEl.hidden = false;
+    }
   } else if (state.paused) {
     statusEl.textContent = "Paused";
+    if (gameOverEl) gameOverEl.hidden = true;
   } else {
     statusEl.textContent = "Running";
+    if (gameOverEl) gameOverEl.hidden = true;
   }
 }
 
 function tick() {
   state = stepState(state, rng);
   render();
+
+  const nextTick = getTickMs(state.score);
+  if (nextTick !== currentTickMs) {
+    currentTickMs = nextTick;
+    stopLoop();
+    startLoop();
+  }
 
   if (!state.alive) {
     stopLoop();
@@ -211,7 +227,7 @@ function tick() {
 
 function startLoop() {
   if (timerId) return;
-  timerId = window.setInterval(tick, config.tickMs);
+  timerId = window.setInterval(tick, currentTickMs);
 }
 
 function stopLoop() {
@@ -233,9 +249,19 @@ function togglePause() {
 
 function restart() {
   state = createInitialState(config, rng);
+  currentTickMs = config.tickMs;
+  if (gameOverEl) gameOverEl.hidden = true;
   render();
   stopLoop();
   startLoop();
+}
+
+function getTickMs(score) {
+  const base = 300;
+  const min = 80;
+  const step = 8;
+  const next = base - score * step;
+  return Math.max(min, next);
 }
 
 function handleDirection(dir) {
@@ -245,12 +271,16 @@ function handleDirection(dir) {
 window.addEventListener("keydown", (event) => {
   const key = event.key.toLowerCase();
   if (key === "arrowup" || key === "w") {
+    event.preventDefault();
     handleDirection(DIRECTIONS.up);
   } else if (key === "arrowdown" || key === "s") {
+    event.preventDefault();
     handleDirection(DIRECTIONS.down);
   } else if (key === "arrowleft" || key === "a") {
+    event.preventDefault();
     handleDirection(DIRECTIONS.left);
   } else if (key === "arrowright" || key === "d") {
+    event.preventDefault();
     handleDirection(DIRECTIONS.right);
   } else if (key === " ") {
     event.preventDefault();
@@ -262,6 +292,7 @@ window.addEventListener("keydown", (event) => {
 
 restartBtn.addEventListener("click", restart);
 pauseBtn.addEventListener("click", togglePause);
+if (restartOverlayBtn) restartOverlayBtn.addEventListener("click", restart);
 
 document.querySelectorAll("[data-dir]").forEach((btn) => {
   btn.addEventListener("click", () => {

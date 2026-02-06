@@ -13,6 +13,11 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   margin: 0;
   font-family: "Trebuchet MS", "Gill Sans", "Verdana", sans-serif;
@@ -26,7 +31,8 @@ body {
   display: grid;
   place-items: center;
   padding: 24px;
-  animation: hue-shift 6s linear infinite, strobe 0.9s steps(2, end) infinite;
+  animation: none;
+  overflow: hidden;
 }
 
 body::before,
@@ -48,7 +54,7 @@ body::before {
     rgba(255, 230, 0, 0.35),
     rgba(255, 0, 220, 0.35)
   );
-  animation: spin 12s linear infinite;
+  animation: none;
 }
 
 body::after {
@@ -57,24 +63,42 @@ body::after {
     rgba(255, 255, 255, 0.15) 0 6px,
     rgba(0, 0, 0, 0) 6px 12px
   );
-  animation: pulse 1.2s ease-in-out infinite, flicker 0.2s steps(2, end) infinite, drift 10s linear infinite;
+  animation: none;
 }
 
 .app {
   width: min(680px, 100%);
   display: grid;
   gap: 16px;
+  max-height: 100vh;
+}
+
+.chant {
+  position: fixed;
+  top: 50%;
+  left: -120%;
+  width: 340%;
+  font-size: clamp(1.2rem, 3vw, 3rem);
+  letter-spacing: 0.25em;
+  color: rgba(255, 255, 255, 0.12);
+  text-transform: uppercase;
+  font-family: "Papyrus", "Times New Roman", serif;
+  transform: translateY(-50%) rotate(23deg);
+  animation: chant-scroll 14s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: screen;
 }
 
 .hud {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--panel);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 0 24px rgba(255, 93, 245, 0.4);
+  background: transparent;
+  border: none;
+  box-shadow: none;
   padding: 12px 16px;
-  backdrop-filter: blur(6px);
+  backdrop-filter: none;
   gap: 16px;
   flex-wrap: wrap;
 }
@@ -86,13 +110,13 @@ body::after {
 }
 
 .title-hero {
-  font-size: 1.9rem;
+  font-size: 2.3rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   text-shadow:
-    0 0 10px rgba(255, 255, 255, 0.7),
-    0 0 22px rgba(255, 93, 245, 0.8),
-    0 0 36px rgba(66, 255, 184, 0.8);
+    0 0 8px rgba(255, 255, 255, 0.6),
+    0 0 16px rgba(255, 93, 245, 0.5),
+    0 0 24px rgba(66, 255, 184, 0.5);
 }
 
 .stats {
@@ -107,9 +131,11 @@ body::after {
   padding: 2px 8px;
   border-radius: 999px;
   border: 1px solid var(--grid);
-  background: #fff;
+  background: rgba(10, 4, 20, 0.8);
   font-size: 0.85rem;
-  color: var(--ink);
+  color: #fff;
+  min-width: 140px;
+  text-align: center;
 }
 
 .stage {
@@ -182,8 +208,8 @@ body::after {
 }
 
 .animal {
-  width: min(220px, 22vw);
-  height: min(220px, 22vw);
+  width: min(240px, 24vw);
+  height: min(240px, 24vw);
   object-fit: cover;
   border-radius: 24px;
   border: 0;
@@ -192,8 +218,7 @@ body::after {
     0 0 60px rgba(66, 255, 184, 0.7);
   animation: spin 6s linear infinite;
   opacity: 0.95;
-  filter: saturate(1.4) contrast(1.1);
-  clip-path: circle(48% at 50% 50%);
+  filter: none;
 }
 
 .animal-wrap {
@@ -223,29 +248,39 @@ body::after {
 
 .a1 .animal {
   transform: rotate(-12deg);
-  animation-duration: 4.5s;
+  border-radius: 38% 62% 48% 52%;
+  animation: spin 4.5s linear infinite;
 }
 
 .a2 .animal {
   transform: rotate(90deg);
-  animation-duration: 7.5s;
+  border-radius: 10% 40% 20% 60%;
+  animation: spin 8s linear infinite;
 }
 
 .a3 .animal {
   transform: rotate(90deg);
-  animation-duration: 6.5s;
+  border-radius: 60% 30% 45% 20%;
+  animation: spin 5.8s linear infinite;
 }
 
 .a4 .animal {
   transform: rotate(180deg);
-  animation-duration: 5s;
+  border-radius: 18% 70% 30% 60%;
+  animation: spin 6.8s linear infinite;
 }
 
 .animal-fly {
   width: min(180px, 18vw);
   height: min(180px, 18vw);
   opacity: 0.75;
-  filter: saturate(1.6) contrast(1.2);
+  filter: none;
+  border-radius: 50%;
+}
+
+.a4 .animal {
+  width: min(520px, 42vw);
+  height: min(520px, 42vw);
 }
 
 .a1 .animal-wrap::after {
@@ -273,6 +308,34 @@ body::after {
   margin-top: 0;
 }
 
+.game-over {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  gap: 16px;
+  background: rgba(10, 4, 20, 0.78);
+  z-index: 5;
+  text-align: center;
+}
+
+.game-over[hidden] {
+  display: none;
+}
+
+.game-over-text {
+  font-size: clamp(1.8rem, 5vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  font-family: "Comic Sans MS", "Comic Sans", cursive;
+  text-shadow:
+    0 0 12px rgba(255, 255, 255, 0.6),
+    0 0 24px rgba(255, 93, 245, 0.8),
+    0 0 36px rgba(66, 255, 184, 0.7);
+}
+
 #board {
   position: relative;
   z-index: 3;
@@ -292,6 +355,31 @@ body::after {
   pointer-events: none;
 }
 
+.logo-corner {
+  position: absolute;
+  width: min(140px, 16vw);
+  height: min(140px, 16vw);
+  bottom: -30px;
+  left: -30px;
+  opacity: 0.7;
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.6));
+  animation: spin 9s linear infinite;
+  pointer-events: none;
+}
+
+.logo-giant {
+  position: absolute;
+  left: -40%;
+  top: 5%;
+  width: min(1200px, 120vw);
+  height: min(1200px, 120vw);
+  opacity: 0.25;
+  filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.35));
+  animation: spin 18s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
 .board-wrap::before {
   content: "";
   position: absolute;
@@ -308,7 +396,22 @@ body::after {
   filter: blur(18px);
   opacity: 0.6;
   z-index: -1;
-  animation: spin 7s linear infinite;
+  animation: spin 7s linear infinite, halo 2.6s ease-in-out infinite;
+}
+
+.board-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: repeating-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0 8px,
+    rgba(0, 0, 0, 0) 8px 16px
+  );
+  mix-blend-mode: screen;
+  opacity: 0.35;
+  pointer-events: none;
 }
 
 .face {
@@ -391,7 +494,7 @@ body::after {
 }
 
 #board {
-  background: #0b0b0b;
+  background: #ffe86a;
   border: 3px solid rgba(255, 255, 255, 0.8);
   box-shadow:
     0 0 28px rgba(66, 255, 184, 0.4),
@@ -399,7 +502,7 @@ body::after {
   width: min(90vw, 420px);
   height: auto;
   image-rendering: pixelated;
-  animation: board-pulse 1.2s ease-in-out infinite, wobble 1.6s ease-in-out infinite;
+  animation: none;
 }
 
 .panel {
@@ -647,6 +750,35 @@ body::after {
   }
 }
 
+@keyframes halo {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes chant-scroll {
+  0% {
+    transform: translate(-10%, -50%) rotate(23deg);
+  }
+  100% {
+    transform: translate(10%, -50%) rotate(23deg);
+  }
+}
+
+@keyframes hue-pop {
+  0%,
+  100% {
+    filter: hue-rotate(0deg) saturate(1);
+  }
+  50% {
+    filter: hue-rotate(60deg) saturate(1.1);
+  }
+}
+
 @keyframes wobble {
   0%,
   100% {
@@ -718,4 +850,5 @@ body::after {
     gap: 4px;
     align-items: flex-start;
   }
+
 }
