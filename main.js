@@ -127,6 +127,9 @@ const restartBtn = document.getElementById("restart");
 const pauseBtn = document.getElementById("pause");
 const gameOverEl = document.getElementById("game-over");
 const restartOverlayBtn = document.getElementById("restart-overlay");
+const nameInput = document.getElementById("name-input");
+const submitScoreBtn = document.getElementById("submit-score");
+const leaderboardList = document.getElementById("leaderboard-list");
 
 function fail(msg) {
   if (statusEl) statusEl.textContent = msg;
@@ -144,6 +147,8 @@ let state = createInitialState(config, rng);
 let timerId = null;
 let currentTickMs = config.tickMs;
 if (gameOverEl) gameOverEl.hidden = true;
+let scores = loadScores();
+renderScores();
 
 const cell = canvas.width / config.gridSize;
 
@@ -251,6 +256,7 @@ function restart() {
   state = createInitialState(config, rng);
   currentTickMs = config.tickMs;
   if (gameOverEl) gameOverEl.hidden = true;
+  if (nameInput) nameInput.value = "";
   render();
   stopLoop();
   startLoop();
@@ -259,7 +265,7 @@ function restart() {
 function getTickMs(score) {
   const base = 300;
   const min = 80;
-  const step = 8;
+  const step = 5;
   const next = base - score * step;
   return Math.max(min, next);
 }
@@ -269,6 +275,9 @@ function handleDirection(dir) {
 }
 
 window.addEventListener("keydown", (event) => {
+  if (document.activeElement && document.activeElement.tagName === "INPUT") {
+    return;
+  }
   const key = event.key.toLowerCase();
   if (key === "arrowup" || key === "w") {
     event.preventDefault();
@@ -293,6 +302,12 @@ window.addEventListener("keydown", (event) => {
 restartBtn.addEventListener("click", restart);
 pauseBtn.addEventListener("click", togglePause);
 if (restartOverlayBtn) restartOverlayBtn.addEventListener("click", restart);
+if (submitScoreBtn) submitScoreBtn.addEventListener("click", submitScore);
+if (nameInput) {
+  nameInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") submitScore();
+  });
+}
 
 document.querySelectorAll("[data-dir]").forEach((btn) => {
   btn.addEventListener("click", () => {
@@ -303,3 +318,45 @@ document.querySelectorAll("[data-dir]").forEach((btn) => {
 
 render();
 startLoop();
+
+function submitScore() {
+  if (!state || state.score <= 0) return;
+  const name = (nameInput?.value || "Anon").trim().slice(0, 20);
+  scores.push({ name: name || "Anon", score: state.score });
+  scores.sort((a, b) => b.score - a.score);
+  scores = scores.slice(0, 5);
+  saveScores(scores);
+  renderScores();
+}
+
+function renderScores() {
+  if (!leaderboardList) return;
+  leaderboardList.innerHTML = "";
+  scores.forEach((entry) => {
+    const li = document.createElement("li");
+    li.textContent = `${entry.name} — ${entry.score}`;
+    leaderboardList.appendChild(li);
+  });
+  if (scores.length === 0) {
+    const li = document.createElement("li");
+    li.textContent = "No scores yet";
+    leaderboardList.appendChild(li);
+  }
+}
+
+function loadScores() {
+  try {
+    const raw = localStorage.getItem("snake-scores");
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveScores(next) {
+  try {
+    localStorage.setItem("snake-scores", JSON.stringify(next));
+  } catch {
+    // ignore storage errors
+  }
+}

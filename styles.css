@@ -101,6 +101,8 @@ body::after {
   backdrop-filter: none;
   gap: 16px;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 10;
 }
 
 .title {
@@ -113,6 +115,7 @@ body::after {
   font-size: 2.3rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
+  color: #ffffff;
   text-shadow:
     0 0 8px rgba(255, 255, 255, 0.6),
     0 0 16px rgba(255, 93, 245, 0.5),
@@ -319,6 +322,55 @@ body::after {
   text-align: center;
 }
 
+.game-over-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.input {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.9);
+  color: #140822;
+  font-size: 0.95rem;
+}
+
+.leaderboard {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: grid;
+  gap: 6px;
+  padding: 10px 14px;
+  background: rgba(10, 4, 20, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: #fff;
+  text-align: center;
+  z-index: 12;
+  min-width: 180px;
+}
+
+.leaderboard-title {
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.leaderboard-list {
+  margin: 0;
+  padding-left: 18px;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.leaderboard-list li {
+  padding: 2px 0;
+}
 .game-over[hidden] {
   display: none;
 }
